@@ -1,0 +1,119 @@
+---
+
+# APACHE #
+
+apache_listen_ip: "*"
+apache_listen_port: 80
+apache_listen_port_ssl: 443
+apache_create_vhosts: true
+apache_vhosts_filename: "vhosts.conf"
+apache_vhosts_template: "vhosts.conf.j2"
+
+apache_global_vhost_settings: |
+  DirectoryIndex index.php index.html
+
+apache_allow_override: "All"
+apache_options: "-Indexes +FollowSymLinks"
+
+apache_vhosts_ssl:
+  - servername: "localhost"
+    serveralias: "www.localhost"
+    certificate_file: "/etc/ssl/certs/grafana/grafana.crt"
+    certificate_key_file: "/etc/ssl/certs/grafana/private/grafana.key"
+    documentroot: "/var/www/html/grafana"
+    extra_parameters:
+    - SSLProxyEngine on
+
+apache_ignore_missing_ssl_certificate: true
+
+apache_vhosts:
+  - servername: "localhost"
+    serveralias: "www.localhost"
+    documentroot: "/var/www/html/grafana"
+
+apache_mods_enabled:
+  - rewrite.load
+  - ssl.load
+apache_state: started
+apache_restart_state: restarted
+apache_packages_state: installed
+
+
+# MySQL #
+
+mysql_databases:
+  - name: graphite
+    collation: utf8_general_ci
+    encoding: utf8
+
+  - name: grafana
+    collation: utf8_general_ci
+    encoding: utf8
+
+mysql_users:
+  - name: graphite
+    host: "127.0.0.1"
+    password: graphite
+    priv: '*.*:ALL,GRANT'
+
+  - name: grafana
+    host: "127.0.0.1"
+    password: grafana
+    priv: '*.*:ALL,GRANT'
+
+mysql_user_name: root
+mysql_user_password: vagrant
+mysql_root_username: root
+mysql_root_password: vagrant
+mysql_root_password_update: yes
+mysql_user_password_update: yes
+
+
+# COLLECTD #
+
+collectd_hostname: localhost
+collectd_log_dir_path: '/var/log/collectd'
+
+
+# GRAPHITE #
+
+graphite_manage_db: true
+graphite_db_backend: mysql
+graphite_db_dbname: graphite
+graphite_db_user: graphite
+graphite_db_password: graphite
+graphite_db_host: localhost
+graphite_db_port: 3306
+graphite_webapp_secret_key: qwerty123
+graphite_secret_key: qwerty123
+
+# GRAFANA #
+
+#grafana_data_dir: "/var/www/grafana"
+# grafana_auth__anonymous_enabled: "true"
+grafana_address: "localhost"
+
+grafana_server:
+  protocol: https
+  enforce_domain: false
+  socket: ""
+  cert_key: /etc/ssl/certs/grafana/private/grafana.key
+  cert_file: /etc/ssl/certs/grafana/grafana.crt
+  enable_gzip: false
+  static_root_path: public
+  router_logging: false
+  serve_from_sub_path: True
+
+grafana_security:
+  admin_user: admin
+  admin_password: grafana
+
+grafana_database:
+  type: mysql
+  name: grafana
+  user: grafana
+  password: grafana
+
+# grafana_server_domain: localhost/grafana
+grafana_auth:
+ disable_login_form: true
