@@ -1,0 +1,46 @@
+---
+default_soft_pkg_redhat:
+  - mc
+  - vim
+  - nano
+  - firewalld
+  - httpd
+  - wget
+  # - gtar
+default_soft_pkg_debian:
+  - mc
+  - vim
+  - nano
+  - firewalld
+  - apache2
+  - wget
+  # - gtar
+
+# vhost_configuration:
+#   - name: test1.com
+#     name_alias: www.test1.com
+#     ip: '*'
+#     default_dir: /var/www/html/test1.com
+#     ssl: no
+#     error_log: /var/log/test1.com-error.log
+#     custom_log: /var/log/test1.com-access.log
+#     port: 80
+#     # additional rules for vhost configuration
+#     custum_values:
+#       - 1
+#       - 2
+#       - 3
+#   - name: test2.com
+#     name_alias: www.test2.com
+#     ip: localhost
+#     default_dir: /var/www/html/test2.com
+#     error_log: /var/log/test2.com-error.log
+#     custom_log: /var/log/test2.com-access.log
+#     ssl: no
+#     port: 8080
+#     # additional rules for vhost configuration
+#     custum_values: []
+#
+#
+#
+# url_wordpress: []

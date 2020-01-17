@@ -1,0 +1,60 @@
+---
+- name: Setting up vagrant
+  hosts: vag
+  become: yes
+  tasks:
+    - name: Install packages via apt
+      apt: name=python-pip state=latest update-cache=yes
+#      apt: name={{ item }} state=latest update-cache=yes
+#      with_items:
+#        - python-pip
+
+
+- name: Install PyOpenSSL
+  hosts: vag
+  become: yes
+  tasks:
+    - pip:
+        name: PyOpenSSL
+        state: present
+
+- name: Generate ssl certificate.
+  hosts: vag
+  become: yes
+  tasks:
+  - name: Ensure directory exists for local self-signed TLS certs
+    file:
+      path: /etc/ssl/certs/grafana
+      state: directory
+      mode: '7777'
+    file:
+      path: /etc/ssl/certs/grafana/private
+      state: directory
+      mode: '7777'
+
+  - name: Generate an OpenSSL private key
+    openssl_privatekey:
+      path: /etc/ssl/certs/grafana/private/grafana.key
+
+  - name: Generate an OpenSSL CSR.
+    openssl_csr:
+      path: /etc/ssl/certs/grafana/grafana.csr
+      privatekey_path: /etc/ssl/certs/grafana/private/grafana.key
+      common_name: grafana
+
+  - name: Generate a Self Signed OpenSSL certificate
+    openssl_certificate:
+      path: /etc/ssl/certs/grafana/grafana.crt
+      privatekey_path: /etc/ssl/certs/grafana/private/grafana.key
+      csr_path: /etc/ssl/certs/grafana/grafana.csr
+      provider: selfsigned
+
+- name: Install MYSQL, Apache2, Graphite, Collectd, Grafana.
+  hosts: vag
+  become: yes
+  roles:
+    - { role: mysql, tags: ['mysql'] }
+    - { role: apache, tags: ['apache'] }
+    - { role: graphite, tags: ['graphite'] }
+    - { role: collectd, tags: ['collectd'] }
+    - { role: grafana, tags: ['grafana'] }
