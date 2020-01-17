@@ -27,9 +27,7 @@
   </Directory>
 {% endif %}
 {% if vhost.extra_parameters is defined %}
-{% for parameter in vhost.extra_parameters %}
-  {{ parameter }}
-{% endfor %}
+  {{ vhost.extra_parameters }}
 {% endif %}
 </VirtualHost>
 
@@ -76,9 +74,7 @@
   </Directory>
 {% endif %}
 {% if vhost.extra_parameters is defined %}
-{% for parameter in vhost.extra_parameters %}
-  {{ parameter }}
-{% endfor %}
+  {{ vhost.extra_parameters }}
 {% endif %}
 </VirtualHost>
 
