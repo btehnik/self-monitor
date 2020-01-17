@@ -1,0 +1,5 @@
+---
+
+- import_tasks: collectd.yml
+  when: collectd_enabled
+  tags: [collectd]
