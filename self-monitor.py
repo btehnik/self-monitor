@@ -44,7 +44,7 @@ args = vars(argv_parser.parse_args())
 if args['argument'] and 'init' in args['argument']:
     init()
     conf()
-    cmd2 = 'cd /Users/bohdan.k/Documents/mine/self-monitor/ans/ && ansible-playbook -e inventory/host_vars/vagrant.yml -i inventory/hosts.ini playbooks/gm.yml  --ask-pass'
+    cmd2 = 'cd ~/self-monitor/ans/ && ansible-playbook -e inventory/host_vars/vagrant.yml -i inventory/hosts.ini playbooks/gm.yml  --ask-pass'
     print ("\n Starting Ansible-playbook. Please, enter the password. \n Password = vagrant \n")
     os.system(cmd2)
 
