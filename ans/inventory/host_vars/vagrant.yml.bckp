@@ -1,0 +1,171 @@
+---
+
+# APACHE #
+
+# apache_listen_ip: "*"
+# apache_listen_port: 80
+# apache_listen_port_ssl: 443
+# apache_create_vhosts: true
+# apache_vhosts_filename: "grafana.conf"
+# apache_vhosts_template: "vhosts.conf.j2"
+
+# apache_global_vhost_settings: |
+#   DirectoryIndex index.php index.html
+
+# apache_allow_override: "All"
+# apache_options: "-Indexes +FollowSymLinks"
+
+# apache_vhosts_ssl:
+#   - servername: "localhost"
+#     serveralias: "www.localhost"
+#     certificate_file: "/etc/ssl/certs/grafana/grafana.crt"
+#     certificate_key_file: "/etc/ssl/certs/grafana/private/grafana.key"
+#     documentroot: "/var/www/html/grafana"
+#     extra_parameters:
+#     - SSLProxyEngine on
+
+# apache_ignore_missing_ssl_certificate: true
+
+# apache_vhosts:
+#   - servername: "localhost"
+#     serveralias: "www.localhost"
+#     documentroot: "/var/www/html/grafana"
+
+apache_mods_enabled:
+  - rewrite.load
+  - ssl.load
+  - proxy.load
+  - proxy_http.load
+  - xml2enc.load
+
+ 
+apache_state: started
+apache_restart_state: restarted
+apache_packages_state: installed
+
+
+# MySQL #
+
+mysql_databases:
+  - name: graphite
+    collation: utf8_general_ci
+    encoding: utf8
+
+  - name: grafana
+    collation: utf8_general_ci
+    encoding: utf8
+
+mysql_users:
+  - name: graphite
+    host: "localhost"
+    password: graphite
+    priv: '*.*:ALL,GRANT'
+
+  - name: grafana
+    host: "localhost"
+    password: grafana
+    priv: '*.*:ALL,GRANT'
+
+mysql_user_name: root
+mysql_user_password: vagrant
+mysql_root_username: root
+mysql_root_password: vagrant
+mysql_root_password_update: yes
+mysql_user_password_update: yes
+
+
+# GRAPHITE #
+
+graphite_secret_key: Super_secretKey_forGraphite
+graphite_time_zone: Europe/Kiev
+
+graphite_manage_db: true
+graphite_db_backend: mysql
+graphite_db_dbname: graphite
+graphite_db_user: graphite
+graphite_db_password: graphite
+graphite_db_host: localhost
+graphite_db_port: ''
+
+# graphite_webapp_secret_key: qwerty123
+# graphite_secret_key: Super-qwerty123
+
+
+# COLLECTD #
+
+collectd_hostname: localhost
+collectd_auto_load_plugin: 'true'
+
+collectd_default_plugins: [cpu, df, interface, load, memory, swap, netlink, disk, mysql]
+
+collectd_write_graphite: yes
+
+
+# GRAFANA #
+
+# grafana_auth__anonymous_enabled: "true"
+# grafana_address: "127.0.0.1"
+# grafana_domain: "localhost"
+
+# grafana_server:
+#   protocol: https
+#   enforce_domain: false
+#   cert_key: /etc/ssl/certs/grafana/private/grafana.key
+#   cert_file: /etc/ssl/certs/grafana/grafana.crt
+#   serve_from_sub_path: True
+
+grafana_security:
+  admin_user: admin
+  admin_password: grafana
+  secret_key: Super_secretKey_forGrafana
+
+grafana_database:
+  type: mysql
+  name: grafana
+  user: graphite
+  password: graphite
+
+# grafana_server_domain: localhost/grafana
+grafana_auth:
+ disable_login_form: false
+ anonymous:
+   org_name: "Main Org."
+   org_role: Editor
+
+
+# grafana_metrics:
+#  interval_seconds: 10
+#  graphite:
+#    address: "localhost:2003"
+#    prefix: "prod.grafana.%(instance_name)s"
+
+
+
+grafana_metrics:
+ interval_seconds: 10
+ graphite:
+   address: "localhost:8080"
+   prefix: "prod.grafana.%(instance_name)s"
+
+grafana_datasources:
+ - name: "graphite"
+   type: "graphite"
+   access: "proxy"
+   url: "http://127.0.0.1:8080/"
+   basicAuth: false
+  #  basicAuthUser: "admin"
+  #  basicAuthPassword: "grafana"
+   isDefault: true
+   editable: true
+
+# grafana_dashboards:
+#  - dashboard_id: '5174'
+#    revision_id: '1'
+#    datasource: 'graphite'
+
+shell: mkdir /var/lib/grafana/dashboards/
+
+grafana_dashboards:
+ - dashboard_id: '203'
+   revision_id: '1'
+   datasource: 'graphite'

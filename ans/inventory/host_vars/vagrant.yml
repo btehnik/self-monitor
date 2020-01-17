@@ -2,41 +2,16 @@
 
 # APACHE #
 
-apache_listen_ip: "*"
-apache_listen_port: 80
-apache_listen_port_ssl: 443
-apache_create_vhosts: true
-apache_vhosts_filename: "vhosts.conf"
-apache_vhosts_template: "vhosts.conf.j2"
-
-apache_global_vhost_settings: |
-  DirectoryIndex index.php index.html
-
-apache_allow_override: "All"
-apache_options: "-Indexes +FollowSymLinks"
-
-apache_vhosts_ssl:
-  - servername: "localhost"
-    serveralias: "www.localhost"
-    certificate_file: "/etc/ssl/certs/grafana/grafana.crt"
-    certificate_key_file: "/etc/ssl/certs/grafana/private/grafana.key"
-    documentroot: "/var/www/html/grafana"
-    extra_parameters:
-    - SSLProxyEngine on
-
-apache_ignore_missing_ssl_certificate: true
-
-apache_vhosts:
-  - servername: "localhost"
-    serveralias: "www.localhost"
-    documentroot: "/var/www/html/grafana"
-
 apache_mods_enabled:
   - rewrite.load
   - ssl.load
+  - proxy.load
+  - proxy_http.load
+  - xml2enc.load
+
 apache_state: started
 apache_restart_state: restarted
-apache_packages_state: installed
+apache_packages_state: latest
 
 
 # MySQL #
@@ -52,12 +27,12 @@ mysql_databases:
 
 mysql_users:
   - name: graphite
-    host: "127.0.0.1"
+    host: "localhost"
     password: graphite
     priv: '*.*:ALL,GRANT'
 
   - name: grafana
-    host: "127.0.0.1"
+    host: "localhost"
     password: grafana
     priv: '*.*:ALL,GRANT'
 
@@ -71,49 +46,86 @@ mysql_user_password_update: yes
 
 # COLLECTD #
 
-collectd_hostname: localhost
-collectd_log_dir_path: '/var/log/collectd'
-
-
-# GRAPHITE #
-
-graphite_manage_db: true
-graphite_db_backend: mysql
-graphite_db_dbname: graphite
-graphite_db_user: graphite
-graphite_db_password: graphite
-graphite_db_host: localhost
-graphite_db_port: 3306
-graphite_webapp_secret_key: qwerty123
-graphite_secret_key: qwerty123
+# collectd_hostname: 127.0.0.1
+collectd_fdqnlookup: true
+collectd_auto_load_plugin: true
+collectd_write_graphite: yes
+collectd_plugins: [disk, users]
+collectd_default_plugins_options:
+  disk:
+  - Disk "/dev/mapper/vagrant--vg-root"
+  - IgnoreSelected false
+  cpu:
+  - ReportByState = true
+  - ReportByCpu = true
+  - ValuesPercentage = false
+  df:
+  - ValuesPercentage True
+  # netlink:
+  # - Interface "All"
+  # - VerboseInterface "All"
+  # - IgnoreSelected false
+  # rrdtool:
+  # - DataDir "/opt/collectd/lib/collectd/rrd"
+  # - CacheFlush 120
+  # - WritesPerSecond 30
 
 # GRAFANA #
 
-#grafana_data_dir: "/var/www/grafana"
-# grafana_auth__anonymous_enabled: "true"
-grafana_address: "localhost"
+grafana_url: http://0.0.0.0:3000/grafana
 
 grafana_server:
   protocol: https
-  enforce_domain: false
-  socket: ""
-  cert_key: /etc/ssl/certs/grafana/private/grafana.key
-  cert_file: /etc/ssl/certs/grafana/grafana.crt
-  enable_gzip: false
-  static_root_path: public
-  router_logging: false
+  # enforce_domain: false
+  cert_key: /etc/ssl/certs/grafana/private/localhost.key
+  cert_file: /etc/ssl/certs/grafana/localhost.crt
+  grafana_url: http://localhost:3000/grafana
   serve_from_sub_path: True
+
+grafana_provisioning_synced: true
 
 grafana_security:
   admin_user: admin
   admin_password: grafana
+  secret_key: Super_secretKey_forGrafana
 
 grafana_database:
   type: mysql
+  host: localhost
   name: grafana
-  user: grafana
-  password: grafana
+  user: graphite
+  password: graphite
+
+grafana_dashboards_dir: /var/lib/grafana/dashboards/
 
 # grafana_server_domain: localhost/grafana
+
 grafana_auth:
- disable_login_form: true
+  disable_login_form: false
+  anonymous:
+    org_name: "Main Org."
+    org_role: Editor
+
+grafana_metrics:
+ interval_seconds: 30
+ graphite:
+   address: "localhost:8080"
+   prefix: "prod.grafana.%(instance_name)s"
+
+grafana_datasources:
+ - name: "graphite"
+   type: "graphite"
+   access: "proxy"
+   url: "http://127.0.0.1:8080/"
+   basicAuth: false
+  #  basicAuthUser: "admin"
+  #  basicAuthPassword: "grafana"
+   isDefault: true
+   editable: true
+
+# shell: mkdir /var/lib/grafana/dashboards/
+
+# grafana_dashboards:
+#  - dashboard_id: '203'
+#    revision_id: '1'
+#    datasource: 'graphite'

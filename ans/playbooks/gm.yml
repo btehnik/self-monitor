@@ -1,14 +1,36 @@
 ---
-- name: Setting up vagrant
+- hosts: vag
+  tasks:
+    - name: Update APT package manager repositories cache
+      become: true
+      apt:
+        update_cache: yes
+
+- name: Install MYSQL, Apache2.
+  hosts: vag
+  become: yes
+  roles:
+    - { role: mysql, tags: ['mysql'] }
+    - { role: apache, tags: ['apache'] }
+
+- name: Setting up Graphite, uwsgi, libapache2-mod-wsgi, etc. 
   hosts: vag
   become: yes
   tasks:
     - name: Install packages via apt
-      apt: name=python-pip state=latest update-cache=yes
-#      apt: name={{ item }} state=latest update-cache=yes
-#      with_items:
-#        - python-pip
-
+      apt: name={{ item }} state=latest update-cache=yes
+      with_items:
+       - python-pip
+       - links
+       - graphite-web
+       - graphite-carbon
+       - uwsgi
+       - uwsgi-plugin-python
+       - libapache2-mod-wsgi
+    - name: Install packages via pip
+      pip: name={{ item }}
+      with_items:
+       - pymysql
 
 - name: Install PyOpenSSL
   hosts: vag
@@ -24,37 +46,101 @@
   tasks:
   - name: Ensure directory exists for local self-signed TLS certs
     file:
-      path: /etc/ssl/certs/grafana
+      path: /etc/ssl/certs/grafana/
       state: directory
-      mode: '7777'
+      mode: '777'
     file:
-      path: /etc/ssl/certs/grafana/private
+      path: /etc/ssl/certs/grafana/private/
       state: directory
-      mode: '7777'
+      mode: '777'
 
   - name: Generate an OpenSSL private key
     openssl_privatekey:
-      path: /etc/ssl/certs/grafana/private/grafana.key
+      path: /etc/ssl/certs/grafana/private/localhost.key
 
   - name: Generate an OpenSSL CSR.
     openssl_csr:
-      path: /etc/ssl/certs/grafana/grafana.csr
-      privatekey_path: /etc/ssl/certs/grafana/private/grafana.key
-      common_name: grafana
+      path: /etc/ssl/certs/grafana/localhost.csr
+      privatekey_path: /etc/ssl/certs/grafana/private/localhost.key
+      common_name: localhost
 
   - name: Generate a Self Signed OpenSSL certificate
     openssl_certificate:
-      path: /etc/ssl/certs/grafana/grafana.crt
-      privatekey_path: /etc/ssl/certs/grafana/private/grafana.key
-      csr_path: /etc/ssl/certs/grafana/grafana.csr
+      path: /etc/ssl/certs/grafana/localhost.crt
+      privatekey_path: /etc/ssl/certs/grafana/private/localhost.key
+      csr_path: /etc/ssl/certs/grafana/localhost.csr
       provider: selfsigned
 
-- name: Install MYSQL, Apache2, Graphite, Collectd, Grafana.
+  - shell: chmod 666 /etc/ssl/certs/grafana/private/localhost.key
+
+- name: Install Collectd, Grafana.
   hosts: vag
   become: yes
   roles:
-    - { role: mysql, tags: ['mysql'] }
-    - { role: apache, tags: ['apache'] }
-    - { role: graphite, tags: ['graphite'] }
     - { role: collectd, tags: ['collectd'] }
     - { role: grafana, tags: ['grafana'] }
+
+- name: Setup configs for graphite, collectd, grafana, virtual-hosts
+  hosts: vag
+  become: yes
+  tasks:
+    - shell: echo "SECRET_KEY = 'UNSAFE_DEFAULT_but_Pohuy'" >> /etc/graphite/local_settings.py
+    - shell: echo "TIME_ZONE = 'Europe/Kiev'" >> /etc/graphite/local_settings.py
+    - shell: sudo -u _graphite graphite-manage migrate --noinput
+    - shell: echo "CARBON_CACHE_ENABLED=true" > /etc/default/graphite-carbon
+    - shell: cp /usr/share/doc/graphite-carbon/examples/storage-aggregation.conf.example /etc/carbon/storage-aggregation.conf
+
+    # # here must be copied storage-schema.conf
+    - copy:
+        src: /Users/bohdan.k/Documents/mine/self-monitor/ans/playbooks/configs/storage-schemas.conf
+        dest: /etc/carbon/storage-schemas.conf
+        owner: root
+        group: root
+    - shell: service carbon-cache restart
+
+    # # here must be copied grafana provisions conf
+    - copy:
+        src: /Users/bohdan.k/Documents/mine/self-monitor/ans/playbooks/configs/sample.yaml
+        dest: /etc/grafana/provisioning/dashboards/sample.yaml
+        owner: root
+        group: grafana
+        mode: '666'
+
+    # # here must be copied grafana dashboard
+    - copy:
+        src: /Users/bohdan.k/Documents/mine/self-monitor/ans/playbooks/configs/true-collectd-2.json
+        dest: /var/lib/grafana/dashboards/true-collectd-2.json
+        owner: root
+        group: root
+    - shell: service grafana-server restart
+
+    # # here must be copied apache2-graphite.conf
+    - copy:
+        src: /Users/bohdan.k/Documents/mine/self-monitor/ans/playbooks/configs/apache2-graphite.conf
+        dest: /etc/apache2/sites-available/apache2-graphite.conf
+        owner: root
+        group: root
+
+    # # here must be copied ports.conf
+    - copy:
+        src: /Users/bohdan.k/Documents/mine/self-monitor/ans/playbooks/configs/ports.conf
+        dest: /etc/apache2/ports.conf
+        owner: root
+        group: root
+
+    # # # here must be copied apache2-grafana.conf
+    # - copy:
+    #     src: /Users/bohdan.k/Documents/mine/self-monitor/ans/playbooks/configs/apache2-grafana.conf
+    #     dest: /etc/apache2/sites-available/apache2-grafana.conf
+    #     owner: root
+    #     group: root
+    #     mode: '0777'
+
+    - shell: a2ensite apache2-graphite    
+    # - shell: a2ensite apache2-grafana
+    - shell: service carbon-cache restart
+    - shell: service grafana-server restart
+    - shell: service uwsgi restart
+    - shell: service collectd restart
+    - shell: service apache2 restart
+    

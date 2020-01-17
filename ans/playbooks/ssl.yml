@@ -1,0 +1,54 @@
+---
+- name: Install PyOpenSSL
+  hosts: vag
+  become: yes
+  tasks:
+    - pip:
+        name: PyOpenSSL
+        state: present
+
+- name: Generate ssl certificate.
+  hosts: vag
+  become: yes
+  tasks:
+  - name: Ensure directory exists for local self-signed TLS certs
+    file:
+      path: /etc/ssl/certs/grafana/
+      state: directory
+      mode: '777'
+    file:
+      path: /etc/ssl/certs/grafana/private/
+      state: directory
+      mode: '777'
+
+  - name: Generate an OpenSSL private key
+    openssl_privatekey:
+      path: /etc/ssl/certs/grafana/private/localhost.key
+
+  - name: Generate an OpenSSL CSR.
+    openssl_csr:
+      path: /etc/ssl/certs/grafana/localhost.csr
+      privatekey_path: /etc/ssl/certs/grafana/private/localhost.key
+      common_name: localhost
+
+  - name: Generate a Self Signed OpenSSL certificate
+    openssl_certificate:
+      path: /etc/ssl/certs/grafana/localhost.crt
+      privatekey_path: /etc/ssl/certs/grafana/private/localhost.key
+      csr_path: /etc/ssl/certs/grafana/localhost.csr
+      provider: selfsigned
+      
+  - shell: chmod 666 /etc/ssl/certs/grafana/private/localhost.key
+
+# - name: Setup snd enable grafana virtual-host
+#   hosts: vag
+#   become: yes
+#   tasks:
+#     - copy:
+#         src: /Users/bohdan.k/Documents/mine/self-monitor/ans/playbooks/configs/apache2-grafana.conf
+#         dest: /etc/apache2/sites-available/apache2-grafana.conf
+#         owner: root
+#         group: root
+#         mode: '0777'
+#     - shell: a2ensite apache2-grafana
+#     - shell: service apache2 restart
