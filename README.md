@@ -6,7 +6,7 @@ Please, do 'git clone' in ~/Documents/
 ### Usage
 `python3 self-monitoring.py -a 'argument' `
 
-Ansible password = vagrant
+Ansible password = vagrant. 
 Script will ask you about it and give hint during instalation.
 
 *** Argumets ***: 
