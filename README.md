@@ -5,6 +5,10 @@ Please, do 'git clone' in ~/Documents/
 
 ### Usage
 `python3 self-monitoring.py -a 'argument' `
+
+Ansible password = vagrant
+Script will ask you about it and give hint during instalation.
+
 *** Argumets ***: 
 - init - Spin-up vagrant host with Ubuntu_16 and configure Grafana, MySQL, Apache, Graphite, Collectd via nsible-playbook.
 - start - For runing `vagrant up`
@@ -16,8 +20,9 @@ This script install VM in VirtualBox with next ports forwarding:
 - 4430 - https port for grafana.
 - 3000 - http port for grafana.
 
-http://localhost:8080 - Graphite web interface
-https://localhost:8080/grafana/ - Grafana web intarface.
+http://localhost:8080 - Graphite web interface.
+
+https://localhost:4430/grafana/ - Grafana web intarface.
 
 *** Example ***
 `python3 self-monitor.py -a init`
