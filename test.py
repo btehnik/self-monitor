@@ -57,7 +57,7 @@ elif args['argument'] and 'stop' in args['argument']:
     os.system(cmd4)
 #
 elif args['argument'] and 'destroy' in args['argument']:
-    cmd5 = 'cd ~/test-ubuntu/test1/ && vagrant destroy && rm -rf ~/test/'
+    cmd5 = 'cd ~/test-ubuntu/test1/ && vagrant destroy && rm -rf ~/test-ubuntu/'
     os.system(cmd5)
 #
 else:

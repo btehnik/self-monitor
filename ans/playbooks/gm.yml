@@ -31,14 +31,7 @@
       pip: name={{ item }}
       with_items:
        - pymysql
-
-- name: Install PyOpenSSL
-  hosts: vag
-  become: yes
-  tasks:
-    - pip:
-        name: PyOpenSSL
-        state: present
+       - PyOpenSSL
 
 - name: Generate ssl certificate.
   hosts: vag
@@ -128,16 +121,16 @@
         owner: root
         group: root
 
-    # # # here must be copied apache2-grafana.conf
-    # - copy:
-    #     src: /Users/bohdan.k/Documents/mine/self-monitor/ans/playbooks/configs/apache2-grafana.conf
-    #     dest: /etc/apache2/sites-available/apache2-grafana.conf
-    #     owner: root
-    #     group: root
-    #     mode: '0777'
+    # # here must be copied apache2-grafana.conf
+    - copy:
+        src: /Users/bohdan.k/Documents/mine/self-monitor/ans/playbooks/configs/apache2-grafana.conf
+        dest: /etc/apache2/sites-available/apache2-grafana.conf
+        owner: root
+        group: root
+        mode: '0777'
 
     - shell: a2ensite apache2-graphite    
-    # - shell: a2ensite apache2-grafana
+    - shell: a2ensite apache2-grafana
     - shell: service carbon-cache restart
     - shell: service grafana-server restart
     - shell: service uwsgi restart

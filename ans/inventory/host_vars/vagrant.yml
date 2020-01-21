@@ -9,10 +9,6 @@ apache_mods_enabled:
   - proxy_http.load
   - xml2enc.load
 
-apache_state: started
-apache_restart_state: restarted
-apache_packages_state: latest
-
 
 # MySQL #
 
@@ -46,7 +42,6 @@ mysql_user_password_update: yes
 
 # COLLECTD #
 
-# collectd_hostname: 127.0.0.1
 collectd_fdqnlookup: true
 collectd_auto_load_plugin: true
 collectd_write_graphite: yes
@@ -61,24 +56,13 @@ collectd_default_plugins_options:
   - ValuesPercentage = false
   df:
   - ValuesPercentage True
-  # netlink:
-  # - Interface "All"
-  # - VerboseInterface "All"
-  # - IgnoreSelected false
-  # rrdtool:
-  # - DataDir "/opt/collectd/lib/collectd/rrd"
-  # - CacheFlush 120
-  # - WritesPerSecond 30
 
 # GRAFANA #
 
 grafana_url: http://0.0.0.0:3000/grafana
 
 grafana_server:
-  protocol: https
-  # enforce_domain: false
-  cert_key: /etc/ssl/certs/grafana/private/localhost.key
-  cert_file: /etc/ssl/certs/grafana/localhost.crt
+  protocol: http
   grafana_url: http://localhost:3000/grafana
   serve_from_sub_path: True
 
@@ -98,8 +82,6 @@ grafana_database:
 
 grafana_dashboards_dir: /var/lib/grafana/dashboards/
 
-# grafana_server_domain: localhost/grafana
-
 grafana_auth:
   disable_login_form: false
   anonymous:
@@ -118,14 +100,5 @@ grafana_datasources:
    access: "proxy"
    url: "http://127.0.0.1:8080/"
    basicAuth: false
-  #  basicAuthUser: "admin"
-  #  basicAuthPassword: "grafana"
    isDefault: true
    editable: true
-
-# shell: mkdir /var/lib/grafana/dashboards/
-
-# grafana_dashboards:
-#  - dashboard_id: '203'
-#    revision_id: '1'
-#    datasource: 'graphite'

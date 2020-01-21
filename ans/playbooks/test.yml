@@ -1,9 +1,0 @@
----
-- name: Setup apache, mysql, graphite, collectd, grafana
-  hosts: test
-  become: yes
-  tasks:
-    - name: Install Apache, MySQL, PHP etc.
-      apt: name={{ item }} state=latest update-cache=yes
-  roles:
-      - { role: apache, tags: ['apache'] }

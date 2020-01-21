@@ -1,1 +1,1 @@
-# self-monitor
+# self-monitoring script
