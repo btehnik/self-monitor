@@ -9,7 +9,7 @@ Please, do 'git clone' in ~/Documents/
 Ansible password = vagrant. 
 Script will ask you about it and give hint during instalation.
 
-*** Argumets ***: 
+#### Argumets: 
 - init - Spin-up vagrant host with Ubuntu_16 and configure Grafana, MySQL, Apache, Graphite, Collectd via nsible-playbook.
 - start - For runing `vagrant up`
 - stop - For runing `vagrant halt`
@@ -24,5 +24,8 @@ http://localhost:8080 - Graphite web interface.
 
 https://localhost:4430/grafana/ - Grafana web intarface.
 
-*** Example ***
+### Examples
 `python3 self-monitor.py -a init`
+`python3 self-monitor.py -a stop`
+`python3 self-monitor.py -a start`
+`python3 self-monitor.py -a destroy`
