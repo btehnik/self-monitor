@@ -7,13 +7,13 @@ Please, do 'git clone' in ~/Documents/
 `python3 self-monitoring.py -a 'argument' `
 
 Ansible password = vagrant. 
-Script will ask you about it and give hint during instalation.
+Script will ask you about it and give hint during installation.
 
 #### Argumets: 
-- init - Spin-up vagrant host with Ubuntu_16 in VirtualBox and configure Grafana, MySQL, Apache, Graphite, Collectd via ansible-playbook.
-- start - For runing `vagrant up`
-- stop - For runing `vagrant halt`
-- destroy - For runing `vagrant destroy` and removing vagrant directory
+- __init__ - Spin-up vagrant host with Ubuntu_16 in VirtualBox and configure Grafana, MySQL, Apache, Graphite, Collectd via ansible-playbook.
+- __start__ - For runing `vagrant up`
+- __stop__ - For runing `vagrant halt`
+- __destroy__ - For runing `vagrant destroy` and removing vagrant directory
 
 This script install VM in VirtualBox with next ports forwarding:
 - 8080 - http port for graphite.
