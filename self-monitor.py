@@ -25,8 +25,7 @@ def conf():
     a = fl.write('\n  config.vm.define "ubuntu-test" do |t|\n  end\n config.vm.provider "virtualbox" do |v|\n    v.name = "ubuntu-test"\n \
  end\nconfig.vm.network "forwarded_port", guest: 8080, host: 8080, host_ip: "127.0.0.1" \n\
 config.vm.network "forwarded_port", guest: 3000, host: 3000, host_ip: "127.0.0.1" \n\
-config.vm.network "forwarded_port", guest: 443, host: 4430, host_ip: "127.0.0.1" \n\
-config.vm.network "forwarded_port", guest: 80, host: 80, host_ip: "127.0.0.1"\nend')
+config.vm.network "forwarded_port", guest: 443, host: 4430, host_ip: "127.0.0.1"\nend')
     fl.close()
     cmd1 = 'cd ~/vgrnt/ubuntu-test1/ && vagrant up'
     os.system(cmd1)
@@ -39,7 +38,7 @@ args = vars(argv_parser.parse_args())
 if args['argument'] and 'init' in args['argument']:
     init()
     conf()
-    cmd2 = 'cd ~/Documents/mine/self-monitor/ans/ && ansible-playbook -e inventory/host_vars/vagrant.yml -i inventory/hosts.ini playbooks/gm.yml  --ask-pass'
+    cmd2 = 'cd ~/Documents/self-monitor/ans/ && ansible-playbook -e inventory/host_vars/vagrant.yml -i inventory/hosts.ini playbooks/gm.yml  --ask-pass'
     print ("\n Starting Ansible-playbook. Please, enter the password. \n Password = vagrant \n")
     os.system(cmd2)
 

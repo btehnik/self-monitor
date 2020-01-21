@@ -36,7 +36,6 @@ config.vm.network "forwarded_port", guest: 80, host: 80, host_ip: "127.0.0.1"\ne
     os.system(cmd11)
     print ("\n VM was configured and is up \n")
 
-
 argv_parser = argparse.ArgumentParser(description="Spin-up vagrant host and setup Grafana, MySQL, Apache, Graphite, Collectd. \n Example: \n 'python3 test.py -a stop' ")
 argv_parser.add_argument("-a", "--argument", help="Argumets: 'init', 'start', 'stop', 'destroy'")
 args = vars(argv_parser.parse_args())
