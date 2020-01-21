@@ -25,7 +25,11 @@ http://localhost:8080 - Graphite web interface.
 https://localhost:4430/grafana/ - Grafana web intarface.
 
 ### Examples
-`python3 self-monitor.py -a init`
-`python3 self-monitor.py -a stop`
-`python3 self-monitor.py -a start`
-`python3 self-monitor.py -a destroy`
+`python3 self-monitor.py -a init` 
+
+`python3 self-monitor.py -a stop` 
+
+`python3 self-monitor.py -a start` 
+
+`python3 self-monitor.py -a destroy` 
+
