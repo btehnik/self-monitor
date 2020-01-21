@@ -10,14 +10,14 @@ Ansible password = vagrant.
 Script will ask you about it and give hint during instalation.
 
 #### Argumets: 
-- init - Spin-up vagrant host with Ubuntu_16 and configure Grafana, MySQL, Apache, Graphite, Collectd via nsible-playbook.
+- init - Spin-up vagrant host with Ubuntu_16 in VirtualBox and configure Grafana, MySQL, Apache, Graphite, Collectd via ansible-playbook.
 - start - For runing `vagrant up`
 - stop - For runing `vagrant halt`
-- destroy - For runing `vagrant destroy`
+- destroy - For runing `vagrant destroy` and removing vagrant directory
 
 This script install VM in VirtualBox with next ports forwarding:
 - 8080 - http port for graphite.
-- 4430 - https port for grafana.
+- 4430 - https port for grafana via Apache reverse proxy (443 to 3000).
 - 3000 - http port for grafana.
 
 http://localhost:8080 - Graphite web interface.
