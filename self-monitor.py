@@ -9,9 +9,8 @@ def init():
      print ("\n", "Create directory %s failed. Maybe it exists already." % path, "\n")
     else:
      print ("\n", "Successfully created directory %s" % path, "\n")
-    cmd0 = 'vagrant box add bento/ubuntu-16.04 --force && cd ~/vgrnt/ubuntu-test1 && vagrant init bento/ubuntu-16.04'
+    cmd0 = 'vagrant box add bento/ubuntu-16.04 --force && cd ~/vgrnt/ubuntu-test1 && vagrant init bento/ubuntu-16.04 && pwd && vagrant status default'
     os.system(cmd0)
-    print ("\n VM was created \n")
 
 def conf():
     file = os.path.expanduser("~/vgrnt/ubuntu-test1/Vagrantfile")
