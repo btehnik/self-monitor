@@ -14,7 +14,7 @@ https://localhost:4430/grafana/ - Grafana web intarface.
 Please, do `git clone` in ~/Documents/
 
 ### Usage
-`python3 self-monitoring.py -a 'argument' `
+`python3 self-monitor.py -a 'argument' `
 
 Ansible password = vagrant. 
 Script will ask you about it and give hint during installation.
