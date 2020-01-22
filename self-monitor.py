@@ -32,7 +32,7 @@ config.vm.network "forwarded_port", guest: 443, host: 4430, host_ip: "127.0.0.1"
     except FileNotFoundError:
         print("\n No such file or directory: ", "\n", file, "\n")
         sys.exit(1)
-    cmd1 = 'cd ~/vgrnt/ubuntu-test1/ && vagrant up && vagrant status just-test'
+    cmd1 = 'cd ~/vgrnt/ubuntu-test1/ && vagrant up && vagrant status ubuntu-test'
     os.system(cmd1)
 
 argv_parser = argparse.ArgumentParser(description="Spin-up vagrant host and setup Grafana, MySQL, Apache, Graphite, Collectd. \n Example: \n 'python3 test.py -a stop' ")
