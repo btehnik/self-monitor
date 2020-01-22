@@ -1,4 +1,5 @@
 import os
+import sys
 import argparse
 
 def init():
@@ -13,22 +14,26 @@ def init():
     os.system(cmd0)
 
 def conf():
-    file = os.path.expanduser("~/vgrnt/ubuntu-test1/Vagrantfile")
-    readFile = open(file)
-    lines = readFile.readlines()
-    readFile.close()
-    w = open(file,'w')
-    w.writelines([item for item in lines[:-2]])
-    w.close()
-    fl = open(file, "a")
-    a = fl.write('\n  config.vm.define "ubuntu-test" do |t|\n  end\n config.vm.provider "virtualbox" do |v|\n    v.name = "ubuntu-test"\n \
+    try:
+        file = os.path.expanduser("~/vgrnt/ubuntu-test1/Vagrantfile")
+        readFile = open(file)
+        lines = readFile.readlines()
+        readFile.close()
+        w = open(file,'w')
+        w.writelines([item for item in lines[:-2]])
+        w.close()
+        fl = open(file, "a")
+        a = fl.write('\n  config.vm.define "ubuntu-test" do |t|\n  end\n config.vm.provider "virtualbox" do |v|\n    v.name = "ubuntu-test"\n \
  end\nconfig.vm.network "forwarded_port", guest: 8080, host: 8080, host_ip: "127.0.0.1" \n\
 config.vm.network "forwarded_port", guest: 3000, host: 3000, host_ip: "127.0.0.1" \n\
 config.vm.network "forwarded_port", guest: 443, host: 4430, host_ip: "127.0.0.1"\nend')
-    fl.close()
-    cmd1 = 'cd ~/vgrnt/ubuntu-test1/ && vagrant up'
+        fl.close()
+        print ("\n VM was configured \n")
+    except FileNotFoundError:
+        print("\n No such file or directory: ", "\n", file, "\n")
+        sys.exit(1)
+    cmd1 = 'cd ~/vgrnt/ubuntu-test1/ && vagrant up && vagrant status just-test'
     os.system(cmd1)
-    print ("\n VM was configured and is up \n")
 
 argv_parser = argparse.ArgumentParser(description="Spin-up vagrant host and setup Grafana, MySQL, Apache, Graphite, Collectd. \n Example: \n 'python3 test.py -a stop' ")
 argv_parser.add_argument("-a", "--argument", help="Argumets: 'init', 'start', 'stop', 'destroy'")
